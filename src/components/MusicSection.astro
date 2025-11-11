@@ -1,0 +1,164 @@
+---
+const instrumentals = [
+  { title: "Nebula Drift", mood: "ambient / space", file: "/audio/nebula-drift.mp3" },
+  { title: "City Lights", mood: "trap / moderno", file: "/audio/city-lights.mp3" },
+  { title: "Velvet", mood: "r&b / soulful", file: "/audio/velvet.mp3" },
+  { title: "Chrome Dreams", mood: "hyperpop / experimental", file: "/audio/chrome-dreams.mp3" },
+  { title: "Noir Tapes", mood: "boom bap / oscuro", file: "/audio/noir-tapes.mp3" },
+  { title: "Sunset Lines", mood: "chill / lofi", file: "/audio/sunset-lines.mp3" },
+];
+
+const abTests = [
+  {
+    id: "track1",
+    title: "Mix & Master — Example 1",
+    dry: "/audio/example1_dry.mp3",
+    master: "/audio/example1_master.mp3",
+  },
+  {
+    id: "track2",
+    title: "Mix & Master — Example 2",
+    dry: "/audio/example2_dry.mp3",
+    master: "/audio/example2_master.mp3",
+  },
+];
+---
+
+<section id="music" class="space-y-10 border-t border-zinc-900 pt-14 mt-8">
+  <h2 class="text-xl font-semibold tracking-tight text-zinc-100">
+    Música · Instrumentales & Mix/Master
+  </h2>
+
+  <!-- Instrumentales -->
+  <div class="space-y-4">
+    <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide">
+      Instrumentales seleccionadas
+    </h3>
+
+    <div class="grid md:grid-cols-3 gap-5">
+      {instrumentals.map((track) => (
+        <div
+          class="p-4 rounded-2xl bg-zinc-900/80 border border-zinc-800 hover:border-emerald-400/50 hover:-translate-y-1 transition-all"
+        >
+          <p class="text-sm font-medium text-zinc-100">{track.title}</p>
+          <p class="text-[0.7rem] text-zinc-500 mb-2">{track.mood}</p>
+          <audio
+            controls
+            class="w-full mt-1 rounded-lg bg-zinc-950"
+            src={track.file}
+          >
+            Tu navegador no soporta audio HTML5.
+          </audio>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Mix & Master A/B -->
+  <div class="space-y-4">
+    <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide">
+      Ejemplos de Mix & Master (A/B)
+    </h3>
+    <p class="text-[0.8rem] text-zinc-400 max-w-2xl">
+      Pulsa la palanca para alternar entre la mezcla original y la versión masterizada.
+      La comparación es instantánea para apreciar la diferencia real.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-5">
+      {abTests.map((item) => (
+        <div
+          class="p-4 rounded-2xl bg-zinc-900/80 border border-zinc-800 space-y-3"
+        >
+          <p class="text-sm font-medium text-zinc-100">
+            {item.title}
+          </p>
+
+          <!-- Palanca -->
+          <div class="flex items-center justify-between gap-3">
+            <span class="text-[0.7rem] text-zinc-500">Original</span>
+            <button
+              type="button"
+              class="mix-toggle relative w-14 h-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center transition-all"
+              data-mix-toggle={item.id}
+              data-state="off"
+            >
+              <span
+                class="mix-knob block w-5 h-5 bg-zinc-300 rounded-full translate-x-1 transition-all"
+              ></span>
+            </button>
+            <span class="text-[0.7rem] text-zinc-500">Master</span>
+          </div>
+
+          <!-- Audios -->
+          <div class="space-y-2">
+            <audio
+              id={`${item.id}-dry`}
+              src={item.dry}
+              controls
+              class="w-full rounded-lg bg-zinc-950"
+            ></audio>
+
+            <audio
+              id={`${item.id}-master`}
+              src={item.master}
+              controls
+              class="w-full rounded-lg bg-zinc-950 hidden"
+            ></audio>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <script>
+    // Este script se ejecuta en el cliente
+    if (typeof window !== "undefined") {
+      window.addEventListener("DOMContentLoaded", () => {
+        const buttons = document.querySelectorAll<HTMLButtonElement>("[data-mix-toggle]");
+
+        buttons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.dataset.mixToggle;
+            if (!id) return;
+
+            const dry = document.getElementById(id + "-dry") as HTMLAudioElement | null;
+            const master = document.getElementById(id + "-master") as HTMLAudioElement | null;
+            const knob = btn.querySelector(".mix-knob") as HTMLSpanElement | null;
+
+            if (!dry || !master || !knob) return;
+
+            const isOn = btn.dataset.state === "on";
+
+            if (!isOn) {
+              // Activar master
+              btn.dataset.state = "on";
+              btn.classList.remove("bg-zinc-800");
+              btn.classList.add("bg-emerald-500/80");
+
+              knob.classList.remove("translate-x-1");
+              knob.classList.add("translate-x-8");
+
+              dry.pause();
+              dry.currentTime = 0;
+              master.classList.remove("hidden");
+              master.play();
+            } else {
+              // Volver a original
+              btn.dataset.state = "off";
+              btn.classList.remove("bg-emerald-500/80");
+              btn.classList.add("bg-zinc-800");
+
+              knob.classList.remove("translate-x-8");
+              knob.classList.add("translate-x-1");
+
+              master.pause();
+              master.currentTime = 0;
+              master.classList.add("hidden");
+              dry.play();
+            }
+          });
+        });
+      });
+    }
+  </script>
+</section>

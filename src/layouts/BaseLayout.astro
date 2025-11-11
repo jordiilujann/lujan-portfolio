@@ -1,0 +1,31 @@
+---
+import "../styles/global.css";
+import Navbar from "../components/Navbar.astro";
+
+const {
+  title = "Jordi Luján (Lujan) | Portfolio",
+  description = "Portfolio personal de Jordi Luján (Lujan).",
+} = Astro.props;
+---
+
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body class="bg-zinc-950 text-zinc-100 min-h-screen">
+    <Navbar />
+    <main class="max-w-6xl mx-auto px-6 pt-10 pb-16 space-y-24">
+      <slot />
+    </main>
+    <footer class="border-t border-zinc-900">
+      <div class="max-w-6xl mx-auto px-6 py-6 text-xs text-zinc-500 flex justify-between">
+        <span>© {new Date().getFullYear()} Jordi Luján (Lujan)</span>
+        <span>Built with Astro & Tailwind</span>
+      </div>
+    </footer>
+  </body>
+</html>

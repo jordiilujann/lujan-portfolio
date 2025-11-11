@@ -1,0 +1,48 @@
+---
+const links = [
+  { name: "Inicio", href: "#top" },
+  { name: "Sobre mí", href: "#about" },
+  { name: "Competencias", href: "#skills" },
+  { name: "Proyectos", href: "#projects" },
+  { name: "GitHub", href: "https://github.com/jordiilujann", external: true },
+];
+---
+
+<nav class="w-full fixed top-0 left-0 z-50 border-b border-zinc-900 bg-zinc-950/90 backdrop-blur">
+  <div class="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
+    <a href="#top" class="text-lg font-semibold tracking-tight text-zinc-100 hover:text-white">
+      Lujan<span class="text-zinc-500">.dev</span>
+    </a>
+
+    <div class="hidden md:flex items-center gap-6">
+      {links.map((link) =>
+        link.external ? (
+          <a
+            href={link.href}
+            target="_blank"
+            class="text-sm text-zinc-400 hover:text-zinc-100"
+          >
+            {link.name}
+          </a>
+        ) : (
+          <a
+            href={link.href}
+            class="text-sm text-zinc-400 hover:text-zinc-100"
+          >
+            {link.name}
+          </a>
+        )
+      )}
+    </div>
+
+    <!-- Botón móvil (luego si quieres lo hacemos funcional) -->
+    <button
+      class="md:hidden text-zinc-400 hover:text-zinc-100"
+      aria-label="Abrir menú"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </div>
+</nav>

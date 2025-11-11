@@ -1,0 +1,95 @@
+---
+const devProjects = [
+  {
+    title: "Solidarity Hub Visualization",
+    description:
+      "Módulo web para visualización de recursos y personas afectadas en emergencias. Paneles, mapas y métricas construidos con una arquitectura organizada.",
+    tech: [".NET", "Blazor", "PostgreSQL"],
+    link: "#", // cuando tengas repo o demo, lo pones
+  },
+  {
+    title: "Record",
+    description:
+      "Aplicación desarrollada con Angular y Node.js centrada en flujos modernos, componentes reutilizables y buenas prácticas en frontend.",
+    tech: ["Angular", "TypeScript", "Node.js"],
+    link: "#",
+  },
+  {
+    title: "Lujan.dev (esta web)",
+    description:
+      "Portfolio personal desarrollado con Astro, TypeScript y Tailwind CSS. One-page optimizada para rendimiento y claridad en la presentación.",
+    tech: ["Astro", "TypeScript", "Tailwind CSS"],
+    link: "https://github.com/jordiilujann/lujan-portfolio",
+  },
+];
+
+const musicNotes = [
+  "Beats orientados a artistas y proyectos audiovisuales.",
+  "Instrumentales con distintos moods: chill, agresivo, ambiental, experimental.",
+  "Servicios de mezcla y master para maximizar pegada y claridad.",
+];
+---
+
+<section id="projects" class="space-y-10 border-t border-zinc-900 pt-14 mt-8">
+  <h2 class="text-xl font-semibold tracking-tight text-zinc-100 mb-2">
+    Proyectos personales
+  </h2>
+
+  <!-- Bloque desarrollo -->
+  <div class="space-y-4">
+    <h3 class="text-sm font-semibold text-zinc-300 tracking-wide uppercase">
+      Desarrollo & Frontend
+    </h3>
+    <div class="grid md:grid-cols-3 gap-5">
+      {devProjects.map((project) => (
+        <article
+          class="group p-5 rounded-2xl bg-zinc-900/80 border border-zinc-800 hover:border-emerald-400/60 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(0,0,0,0.55)] transition-all"
+        >
+          <h4 class="text-sm font-semibold text-zinc-100 mb-2">
+            {project.title}
+          </h4>
+          <p class="text-[0.75rem] text-zinc-400 mb-3">
+            {project.description}
+          </p>
+          <div class="flex flex-wrap gap-1 mb-3">
+            {project.tech.map((t) => (
+              <span
+                class="px-2 py-1 rounded-full bg-zinc-800 text-[0.6rem] text-zinc-300"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+          {project.link && project.link !== "#" && (
+            <a
+              href={project.link}
+              target="_blank"
+              class="text-[0.7rem] text-emerald-300 group-hover:text-emerald-200 underline underline-offset-4"
+            >
+              Ver más
+            </a>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <!-- Bloque música intro -->
+  <div class="space-y-3">
+    <h3 class="text-sm font-semibold text-zinc-300 tracking-wide uppercase">
+      Música · Instrumentales, Mix & Master
+    </h3>
+    <p class="text-[0.8rem] text-zinc-400 max-w-2xl">
+      Además del desarrollo web, trabajo como productor musical bajo el alias
+      <span class="text-zinc-100"> Lujan</span>. Aquí puedes escuchar una
+      selección de instrumentales y ejemplos de mezcla y master.
+    </p>
+    <ul class="flex flex-wrap gap-2 text-[0.7rem] text-zinc-500">
+      {musicNotes.map((n) => (
+        <li class="px-2 py-1 rounded-full bg-zinc-900/80 border border-zinc-800">
+          {n}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
