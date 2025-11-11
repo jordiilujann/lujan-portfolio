@@ -1,4 +1,6 @@
 ---
+import AudioPlayer from "./AudioPlayer.astro";
+
 const instrumentals = [
   { title: "Nebula Drift", mood: "ambient / space", file: "/audio/nebula-drift.mp3" },
   { title: "City Lights", mood: "trap / moderno", file: "/audio/city-lights.mp3" },
@@ -37,19 +39,7 @@ const abTests = [
 
     <div class="grid md:grid-cols-3 gap-5">
       {instrumentals.map((track) => (
-        <div
-          class="p-4 rounded-2xl bg-zinc-900/80 border border-zinc-800 hover:border-emerald-400/50 hover:-translate-y-1 transition-all"
-        >
-          <p class="text-sm font-medium text-zinc-100">{track.title}</p>
-          <p class="text-[0.7rem] text-zinc-500 mb-2">{track.mood}</p>
-          <audio
-            controls
-            class="w-full mt-1 rounded-lg bg-zinc-950"
-            src={track.file}
-          >
-            Tu navegador no soporta audio HTML5.
-          </audio>
-        </div>
+        <AudioPlayer title={track.title} mood={track.mood} file={track.file} />
       ))}
     </div>
   </div>
@@ -61,99 +51,86 @@ const abTests = [
     </h3>
     <p class="text-[0.8rem] text-zinc-400 max-w-2xl">
       Pulsa la palanca para alternar entre la mezcla original y la versión masterizada.
-      La comparación es instantánea para apreciar la diferencia real.
+      El cambio es instantáneo para comparar de forma clara.
     </p>
 
     <div class="grid md:grid-cols-2 gap-5">
       {abTests.map((item) => (
         <div
-          class="p-4 rounded-2xl bg-zinc-900/80 border border-zinc-800 space-y-3"
+          class="p-4 rounded-2xl bg-zinc-900/90 border border-zinc-800 space-y-3"
+          data-ab-root={item.id}
         >
           <p class="text-sm font-medium text-zinc-100">
             {item.title}
           </p>
 
-          <!-- Palanca -->
           <div class="flex items-center justify-between gap-3">
             <span class="text-[0.7rem] text-zinc-500">Original</span>
             <button
               type="button"
-              class="mix-toggle relative w-14 h-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center transition-all"
-              data-mix-toggle={item.id}
+              class="relative w-14 h-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center transition-all"
+              data-role="toggle"
               data-state="off"
             >
               <span
-                class="mix-knob block w-5 h-5 bg-zinc-300 rounded-full translate-x-1 transition-all"
+                class="block w-5 h-5 bg-zinc-300 rounded-full translate-x-1 transition-all"
+                data-role="knob"
               ></span>
             </button>
             <span class="text-[0.7rem] text-zinc-500">Master</span>
           </div>
 
-          <!-- Audios -->
-          <div class="space-y-2">
-            <audio
-              id={`${item.id}-dry`}
-              src={item.dry}
-              controls
-              class="w-full rounded-lg bg-zinc-950"
-            ></audio>
-
-            <audio
-              id={`${item.id}-master`}
-              src={item.master}
-              controls
-              class="w-full rounded-lg bg-zinc-950 hidden"
-            ></audio>
+          <div class="text-[0.7rem] text-zinc-500">
+            <span data-role="label">Reproduciendo: Original</span>
           </div>
+
+          <audio src={item.dry} class="hidden" data-audio="dry"></audio>
+          <audio src={item.master} class="hidden" data-audio="master"></audio>
         </div>
       ))}
     </div>
   </div>
 
   <script>
-    // Este script se ejecuta en el cliente
     if (typeof window !== "undefined") {
       window.addEventListener("DOMContentLoaded", () => {
-        const buttons = document.querySelectorAll<HTMLButtonElement>("[data-mix-toggle]");
+        const abBlocks = document.querySelectorAll<HTMLElement>("[data-ab-root]");
 
-        buttons.forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const id = btn.dataset.mixToggle;
-            if (!id) return;
+        abBlocks.forEach((block) => {
+          const toggle = block.querySelector<HTMLButtonElement>("[data-role='toggle']");
+          const knob = block.querySelector<HTMLSpanElement>("[data-role='knob']");
+          const label = block.querySelector<HTMLSpanElement>("[data-role='label']");
+          const dry = block.querySelector<HTMLAudioElement>("[data-audio='dry']");
+          const master = block.querySelector<HTMLAudioElement>("[data-audio='master']");
 
-            const dry = document.getElementById(id + "-dry") as HTMLAudioElement | null;
-            const master = document.getElementById(id + "-master") as HTMLAudioElement | null;
-            const knob = btn.querySelector(".mix-knob") as HTMLSpanElement | null;
+          if (!toggle || !knob || !label || !dry || !master) return;
 
-            if (!dry || !master || !knob) return;
+          label.textContent = "Reproduciendo: Original";
 
-            const isOn = btn.dataset.state === "on";
+          toggle.addEventListener("click", () => {
+            const isOn = toggle.dataset.state === "on";
+
+            // parar ambos antes de cambiar
+            dry.pause();
+            master.pause();
+            dry.currentTime = 0;
+            master.currentTime = 0;
 
             if (!isOn) {
-              // Activar master
-              btn.dataset.state = "on";
-              btn.classList.remove("bg-zinc-800");
-              btn.classList.add("bg-emerald-500/80");
-
+              toggle.dataset.state = "on";
+              toggle.classList.remove("bg-zinc-800");
+              toggle.classList.add("bg-emerald-500/80");
               knob.classList.remove("translate-x-1");
               knob.classList.add("translate-x-8");
-
-              dry.pause();
-              dry.currentTime = 0;
-              master.classList.remove("hidden");
+              label.textContent = "Reproduciendo: Master";
               master.play();
             } else {
-              // Volver a original
-              btn.dataset.state = "off";
-              btn.classList.remove("bg-emerald-500/80");
-              btn.classList.add("bg-zinc-800");
-
+              toggle.dataset.state = "off";
+              toggle.classList.remove("bg-emerald-500/80");
+              toggle.classList.add("bg-zinc-800");
               knob.classList.remove("translate-x-8");
               knob.classList.add("translate-x-1");
-
-              master.pause();
-              master.currentTime = 0;
-              master.classList.add("hidden");
+              label.textContent = "Reproduciendo: Original";
               dry.play();
             }
           });

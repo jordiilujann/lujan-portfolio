@@ -1,0 +1,151 @@
+---
+interface Props {
+  title: string;
+  mood?: string;
+  file: string;
+}
+
+const { title, mood, file } = Astro.props;
+---
+
+<div
+  class="group p-4 rounded-2xl bg-zinc-900/90 border border-zinc-800/90 hover:border-emerald-400/60 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(0,0,0,0.6)] transition-all flex flex-col gap-3"
+  data-player-root
+>
+  <div class="flex items-baseline justify-between gap-3">
+    <div class="flex-1">
+      <p class="text-sm font-semibold text-zinc-100 line-clamp-1">
+        {title}
+      </p>
+      {mood && (
+        <p class="text-[0.7rem] text-zinc-500 line-clamp-1">
+          {mood}
+        </p>
+      )}
+    </div>
+
+    <button
+      type="button"
+      class="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700 text-zinc-300 hover:bg-emerald-500/90 hover:text-zinc-950 hover:border-emerald-400 transition-all"
+      data-role="play"
+      aria-label={`Reproducir ${title}`}
+      data-state="paused"
+    >
+      <span
+        class="block w-0 h-0 border-l-[10px] border-l-current border-y-[6px] border-y-transparent"
+        data-icon="play"
+      ></span>
+      <span
+        class="hidden w-2.5 h-3.5 border-l-[2px] border-r-[2px] border-current"
+        data-icon="pause"
+      ></span>
+    </button>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <span class="text-[0.65rem] text-zinc-500 min-w-[32px]" data-role="current">
+      0:00
+    </span>
+    <div class="relative flex-1 h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+      <div
+        class="absolute inset-y-0 left-0 w-0 bg-emerald-400/80 transition-[width]"
+        data-role="progress"
+      ></div>
+    </div>
+    <span class="text-[0.65rem] text-zinc-500 min-w-[32px]" data-role="duration">
+      0:00
+    </span>
+  </div>
+
+  <audio src={file} preload="metadata" class="hidden" data-audio></audio>
+</div>
+
+<script>
+  if (typeof window !== "undefined") {
+    const root = document.currentScript?.parentElement as HTMLElement | null;
+    if (!root) return;
+
+    const audio = root.querySelector("[data-audio]") as HTMLAudioElement | null;
+    const playBtn = root.querySelector("[data-role='play']") as HTMLButtonElement | null;
+    const currentEl = root.querySelector("[data-role='current']") as HTMLSpanElement | null;
+    const durationEl = root.querySelector("[data-role='duration']") as HTMLSpanElement | null;
+    const progressEl = root.querySelector("[data-role='progress']") as HTMLDivElement | null;
+    const playIcon = root.querySelector("[data-icon='play']") as HTMLElement | null;
+    const pauseIcon = root.querySelector("[data-icon='pause']") as HTMLElement | null;
+
+    if (!audio || !playBtn || !currentEl || !durationEl || !progressEl || !playIcon || !pauseIcon) {
+      return;
+    }
+
+    const formatTime = (t: number): string => {
+      if (!isFinite(t) || t < 0) t = 0;
+      const m = Math.floor(t / 60);
+      const s = Math.floor(t % 60);
+      return `${m}:${s.toString().padStart(2, "0")}`;
+    };
+
+    audio.addEventListener("loadedmetadata", () => {
+      durationEl.textContent = formatTime(audio.duration || 0);
+    });
+
+    playBtn.addEventListener("click", () => {
+      const isPaused = audio.paused;
+
+      // Pausar otros players
+      (
+        document.querySelectorAll("[data-player-root] audio") as NodeListOf<HTMLAudioElement>
+      ).forEach((el) => {
+        if (el !== audio) {
+          el.pause();
+          el.currentTime = 0;
+
+          const parent = el.closest("[data-player-root]") as HTMLElement | null;
+          if (!parent) return;
+
+          const otherBtn = parent.querySelector("[data-role='play']") as HTMLButtonElement | null;
+          const otherPlayIcon = parent.querySelector("[data-icon='play']") as HTMLElement | null;
+          const otherPauseIcon = parent.querySelector("[data-icon='pause']") as HTMLElement | null;
+          const otherProgress = parent.querySelector("[data-role='progress']") as HTMLDivElement | null;
+          const otherCurrent = parent.querySelector("[data-role='current']") as HTMLSpanElement | null;
+
+          if (otherBtn && otherPlayIcon && otherPauseIcon) {
+            otherBtn.dataset.state = "paused";
+            otherPlayIcon.classList.remove("hidden");
+            otherPauseIcon.classList.add("hidden");
+          }
+          if (otherProgress) otherProgress.style.width = "0%";
+          if (otherCurrent) otherCurrent.textContent = "0:00";
+        }
+      });
+
+      if (isPaused) {
+        audio.play();
+        playBtn.dataset.state = "playing";
+        playIcon.classList.add("hidden");
+        pauseIcon.classList.remove("hidden");
+      } else {
+        audio.pause();
+        playBtn.dataset.state = "paused";
+        playIcon.classList.remove("hidden");
+        pauseIcon.classList.add("hidden");
+      }
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      currentEl.textContent = formatTime(audio.currentTime);
+      const ratio =
+        audio.duration && isFinite(audio.duration)
+          ? audio.currentTime / audio.duration
+          : 0;
+      progressEl.style.width = `${Math.max(0, Math.min(1, ratio)) * 100}%`;
+    });
+
+    audio.addEventListener("ended", () => {
+      playBtn.dataset.state = "paused";
+      playIcon.classList.remove("hidden");
+      pauseIcon.classList.add("hidden");
+      progressEl.style.width = "0%";
+      currentEl.textContent = "0:00";
+    });
+  }
+</script>
