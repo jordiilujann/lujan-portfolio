@@ -1,51 +1,132 @@
-<section id="skills" class="space-y-6 border-t border-zinc-900 pt-14 mt-8">
+---
+const langs = [
+  "TypeScript",
+  "JavaScript",
+  "HTML",
+  "C",
+  "Java",
+  "Python",
+];
+
+const frameworks = [
+  "Angular",
+  "Astro",
+  "Node.js",
+  ".NET / Blazor",
+  "Tailwind",
+];
+
+const databases = [
+  "PostgreSQL",
+  "MongoDB",
+];
+
+const tools = [
+  "Git",
+  "VS Code",
+  "Postman",
+  "Figma",
+];
+---
+
+<section id="skills" class="space-y-8 border-t border-zinc-900 pt-14 mt-8">
   <h2 class="text-xl font-semibold tracking-tight text-zinc-100">Competencias</h2>
 
-  <div class="grid md:grid-cols-2 gap-10">
-    <div>
-      <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide mb-3">Formación</h3>
-      <ul class="space-y-2 text-sm text-zinc-400">
-        <li>Grado en Ingeniería Informática (en curso).</li>
-        <li>Enfoque en frontend moderno, arquitectura y UX.</li>
-        <li>Proyectos personales y académicos con stack actual.</li>
-      </ul>
-    </div>
+  <!-- 1) Desarrollo (Full-stack) -->
+  <div class="space-y-4">
+    <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide">Desarrollo (Full-stack)</h3>
+    <p class="text-[0.95rem] text-zinc-300 leading-relaxed">
+      Enfoque principal en frontend moderno (accesibilidad, rendimiento y DX), con experiencia en backend y
+      APIs REST. Nivel actual global: <span class="text-zinc-100">básico–medio</span>.
+    </p>
 
-    <div>
-      <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide mb-3">Desarrollo</h3>
+    <!-- Lenguajes -->
+    <div class="space-y-2">
+      <p class="text-[0.8rem] text-zinc-400">Lenguajes</p>
       <div class="flex flex-wrap gap-2">
-        <span class="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">TypeScript</span>
-        <span class="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">Astro</span>
-        <span class="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">Angular</span>
-        <span class="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">Node.js</span>
-        <span class="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">.NET / Blazor</span>
-        <span class="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">Tailwind</span>
-      </div>
-      <ul class="space-y-2 text-sm text-zinc-400 mt-3">
-        <li>Componentización, patrones, consumo de APIs REST.</li>
-        <li>Buenas prácticas, accesibilidad, performance.</li>
-        <li>Git / GitHub, ramas y revisiones.</li>
-      </ul>
-    </div>
-
-    <div>
-      <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide mb-3">Música & Sonido</h3>
-      <ul class="space-y-2 text-sm text-zinc-400">
-        <li>Producción musical como <span class="text-zinc-200">Lujan</span>.</li>
-        <li>Instrumentales (trap, r&b, lofi, ambiental, experimental).</li>
-        <li>Servicios de mezcla y master para artistas y vídeo.</li>
-      </ul>
-    </div>
-
-    <div>
-      <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide mb-3">Herramientas</h3>
-      <div class="flex flex-wrap gap-2">
-        <span class="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">VS Code</span>
-        <span class="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">Git</span>
-        <span class="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">Figma</span>
-        <span class="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">Postman</span>
-        <span class="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">DAWs</span>
+        {langs.map((t) => (
+          <span class="px-2.5 py-1 rounded-full bg-zinc-900/70 border border-zinc-800 text-zinc-200 text-xs">
+            {t}
+          </span>
+        ))}
       </div>
     </div>
+
+    <!-- Frameworks / Librerías / Plataformas -->
+    <div class="space-y-2">
+      <p class="text-[0.8rem] text-zinc-400">Frameworks & Librerías</p>
+      <div class="flex flex-wrap gap-2">
+        {frameworks.map((t) => (
+          <span class="px-2.5 py-1 rounded-full bg-zinc-900/70 border border-zinc-800 text-zinc-200 text-xs">
+            {t}
+          </span>
+        ))}
+      </div>
+    </div>
+
+    <!-- Bases de datos -->
+    <div class="space-y-2">
+      <p class="text-[0.8rem] text-zinc-400">Bases de datos</p>
+      <div class="flex flex-wrap gap-2">
+        {databases.map((t) => (
+          <span class="px-2.5 py-1 rounded-full bg-zinc-900/70 border border-zinc-800 text-zinc-200 text-xs">
+            {t}
+          </span>
+        ))}
+      </div>
+    </div>
+
+    <!-- Herramientas -->
+    <div class="space-y-2">
+      <p class="text-[0.8rem] text-zinc-400">Herramientas</p>
+      <div class="flex flex-wrap gap-2">
+        {tools.map((t) => (
+          <span class="px-2.5 py-1 rounded-full bg-zinc-900/70 border border-zinc-800 text-zinc-200 text-xs">
+            {t}
+          </span>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- separador sutil -->
+  <div class="h-px bg-zinc-900"></div>
+
+  <!-- 2) Formación -->
+  <div class="space-y-4">
+    <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide">Formación</h3>
+    <ul class="space-y-3 text-zinc-300 leading-relaxed">
+      <li>
+        <span class="font-medium text-zinc-100">Grado en Ingeniería Informática (4º curso)</span>.
+        Especialización en <span class="text-zinc-100">Ingeniería del Software</span> · En curso.
+      </li>
+      <li>
+        <span class="font-medium text-zinc-100">Enseñanzas Profesionales de Piano</span> · Finalizadas.
+      </li>
+      <li>
+        <span class="font-medium text-zinc-100">Producción musical</span> · Autodidacta (+4 años).
+      </li>
+    </ul>
+  </div>
+
+  <!-- 3) Música & Sonido (resumen) -->
+  <div class="space-y-4">
+    <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide">Música & Sonido</h3>
+    <ul class="space-y-2 text-zinc-300 leading-relaxed">
+      <li>Mix y master finales · Mezcla de voces.</li>
+      <li>Creación de <span class="text-zinc-100">loops</span>, <span class="text-zinc-100">samples</span> e <span class="text-zinc-100">instrumentales</span> completas.</li>
+      <li>Compresión (batería, paralela, multibanda) y ecualización dinámica/multibanda.</li>
+      <li>Síntesis granular y <span class="text-zinc-100">sound design</span> (Serum, Vital).</li>
+      <li>Distorsión, clipping, saturación y gestión del campo estéreo.</li>
+    </ul>
+  </div>
+
+  <!-- 4) Idiomas & Certificados -->
+  <div class="space-y-4">
+    <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide">Idiomas & Certificados</h3>
+    <ul class="space-y-2 text-zinc-300 leading-relaxed">
+      <li>Inglés <span class="text-zinc-100 font-medium">B2</span> (MCER).</li>
+      <li>Permiso de conducción <span class="text-zinc-100 font-medium">B</span>.</li>
+    </ul>
   </div>
 </section>
