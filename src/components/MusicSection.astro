@@ -2,26 +2,69 @@
 import AudioPlayer from "./AudioPlayer.astro";
 
 const instrumentals = [
-  { title: "Nebula Drift", mood: "ambient / space", file: "/audio/nebula-drift.mp3" },
-  { title: "City Lights", mood: "trap / moderno", file: "/audio/city-lights.mp3" },
-  { title: "Velvet", mood: "r&b / soulful", file: "/audio/velvet.mp3" },
-  { title: "Chrome Dreams", mood: "hyperpop / experimental", file: "/audio/chrome-dreams.mp3" },
-  { title: "Noir Tapes", mood: "boom bap / oscuro", file: "/audio/noir-tapes.mp3" },
-  { title: "Sunset Lines", mood: "chill / lofi", file: "/audio/sunset-lines.mp3" },
+  {
+    title: "Drum & Bass",
+    mood: "dnb / energético",
+    dry: "/audio/instrumentales/drum-and-bass-raw.mp3",
+    master: "/audio/instrumentales/drum-and-bass-master.mp3",
+    description:
+      "Ritmos acelerados y graves contundentes con pads atmosféricos. Drum & bass de corte moderno pensado para mantener la energía sin perder claridad en la mezcla.",
+  },
+  {
+    title: "Electrónica",
+    mood: "electrónico / groove",
+    dry: "/audio/instrumentales/electronica-raw.mp3",
+    master: "/audio/instrumentales/electronica-master.mp3",
+    description:
+      "Influencias de techno melódico y house. Sintes limpios, percusión precisa y bajo envolvente para un groove elegante y progresivo.",
+  },
+  {
+    title: "Reggaeton con Beat Switch",
+    mood: "reggaeton / switch",
+    dry: "/audio/instrumentales/reggaeton-con-beatswitch-raw.mp3",
+    master: "/audio/instrumentales/reggaeton-con-beatswitch-master.mp3",
+    description:
+      "Comienza con un patrón clásico y evoluciona a un segundo beat más experimental. Dos climas en una sola instrumental para variar dinámicas.",
+  },
+  {
+    title: "Trap Travis",
+    mood: "trap / oscuro",
+    dry: "/audio/instrumentales/trap-travis-raw.mp3",
+    master: "/audio/instrumentales/trap-travis-master.mp3",
+    description:
+      "Inspirada en el universo de Travis Scott: 808 profundos, texturas espaciales y una atmósfera cinematográfica con carácter.",
+  },
+  // placeholders (ajusta rutas cuando subas los audios)
+  {
+    title: "Chrome Dreams",
+    mood: "hyperpop / experimental",
+    dry: "/audio/instrumentales/chrome-dreams_dry.mp3",
+    master: "/audio/instrumentales/chrome-dreams_master.mp3",
+    description:
+      "Estética hyperpop con capas brillantes y distorsión armónica. Búsqueda de tensión entre lo digital y lo emocional.",
+  },
+  {
+    title: "Sunset Lines",
+    mood: "chill / lofi",
+    dry: "/audio/instrumentales/sunset-lines_dry.mp3",
+    master: "/audio/instrumentales/sunset-lines_master.mp3",
+    description:
+      "Tonos cálidos, percusiones suaves y un ambiente nostálgico de atardecer. Ideal para momentos introspectivos.",
+  },
 ];
 
 const abTests = [
   {
-    id: "track1",
+    id: "mix1",
     title: "Mix & Master — Example 1",
-    dry: "/audio/example1_dry.mp3",
-    master: "/audio/example1_master.mp3",
+    dry: "/audio/mixmaster/example1_dry.mp3",
+    master: "/audio/mixmaster/example1_master.mp3",
   },
   {
-    id: "track2",
+    id: "mix2",
     title: "Mix & Master — Example 2",
-    dry: "/audio/example2_dry.mp3",
-    master: "/audio/example2_master.mp3",
+    dry: "/audio/mixmaster/example2_dry.mp3",
+    master: "/audio/mixmaster/example2_master.mp3",
   },
 ];
 ---
@@ -39,7 +82,13 @@ const abTests = [
 
     <div class="grid md:grid-cols-3 gap-5">
       {instrumentals.map((track) => (
-        <AudioPlayer title={track.title} mood={track.mood} file={track.file} />
+        <AudioPlayer
+          title={track.title}
+          mood={track.mood}
+          dry={track.dry}
+          master={track.master}
+          description={track.description}
+        />
       ))}
     </div>
   </div>
@@ -51,7 +100,7 @@ const abTests = [
     </h3>
     <p class="text-[0.8rem] text-zinc-400 max-w-2xl">
       Pulsa la palanca para alternar entre la mezcla original y la versión masterizada.
-      El cambio es instantáneo para comparar de forma clara.
+      La comparación es instantánea para apreciar la diferencia real.
     </p>
 
     <div class="grid md:grid-cols-2 gap-5">
@@ -110,7 +159,7 @@ const abTests = [
           toggle.addEventListener("click", () => {
             const isOn = toggle.dataset.state === "on";
 
-            // parar ambos antes de cambiar
+            // detener ambos antes de cambiar (estos ejemplos A/B simples)
             dry.pause();
             master.pause();
             dry.currentTime = 0;

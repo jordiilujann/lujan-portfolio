@@ -1,0 +1,57 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { projects } from "../../lib/data/projects";
+
+const { slug } = Astro.params;
+const project = projects.find(p => p.slug === slug);
+
+if (!project) {
+  throw new Error(`Proyecto no encontrado: ${slug}`);
+}
+---
+
+<BaseLayout title={`${project.title} | Proyecto`} description={project.summary}>
+  <article class="space-y-6">
+    <a href="/#projects" class="text-sm text-zinc-400 hover:text-zinc-100">&larr; Volver a proyectos</a>
+
+    <header class="space-y-3">
+      <h1 class="text-2xl md:text-3xl font-semibold tracking-tight">{project.title}</h1>
+      <p class="text-zinc-400 max-w-3xl">{project.summary}</p>
+      <div class="flex flex-wrap gap-2">
+        {project.tech.map((t) => (
+          <span class="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">{t}</span>
+        ))}
+      </div>
+      <div class="flex gap-3 text-sm">
+        {project.repo && (
+          <a href={project.repo} target="_blank" class="px-4 py-2 rounded-full bg-zinc-100 text-zinc-900">Repositorio</a>
+        )}
+        {project.demo && (
+          <a href={project.demo} target="_blank" class="px-4 py-2 rounded-full border border-zinc-700 text-zinc-200">Demo</a>
+        )}
+      </div>
+    </header>
+
+    {project.cover && (
+      <img src={project.cover} alt={project.title} class="w-full rounded-2xl border border-zinc-800" />
+    )}
+
+    {project.images && project.images.length > 0 && (
+      <section class="space-y-3">
+        <h2 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide">Capturas</h2>
+        <div class="grid md:grid-cols-2 gap-4">
+          {project.images.map((src) => (
+            <img src={src} alt="Captura" class="w-full rounded-xl border border-zinc-800" />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {project.video && (
+      <section class="space-y-3">
+        <h2 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide">Vídeo</h2>
+        <video src={project.video} controls class="w-full rounded-xl border border-zinc-800"></video>
+      </section>
+    )}
+  </article>
+</BaseLayout>

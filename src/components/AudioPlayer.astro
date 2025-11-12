@@ -2,34 +2,59 @@
 interface Props {
   title: string;
   mood?: string;
-  file: string;
+  dry: string;     // versión original / raw
+  master: string;  // versión masterizada
+  description?: string;
 }
 
-const { title, mood, file } = Astro.props;
+const { title, mood, dry, master, description } = Astro.props;
 ---
 
 <div
-  class="group p-4 rounded-2xl bg-zinc-900/90 border border-zinc-800/90 hover:border-emerald-400/60 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(0,0,0,0.6)] transition-all flex flex-col gap-3"
+  class="group p-4 rounded-2xl bg-zinc-900/90 border border-zinc-800 hover:border-emerald-400/60 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(0,0,0,0.6)] transition-all flex flex-col gap-3"
   data-player-root
 >
-  <div class="flex items-baseline justify-between gap-3">
-    <div class="flex-1">
-      <p class="text-sm font-semibold text-zinc-100 line-clamp-1">
-        {title}
+  <div class="flex flex-col gap-1">
+    <p class="text-sm font-semibold text-zinc-100">{title}</p>
+    {mood && <p class="text-[0.7rem] text-zinc-500">{mood}</p>}
+    {description && (
+      <p class="text-[0.75rem] text-zinc-400 leading-snug mt-1">
+        {description}
       </p>
-      {mood && (
-        <p class="text-[0.7rem] text-zinc-500 line-clamp-1">
-          {mood}
-        </p>
-      )}
-    </div>
+    )}
+  </div>
 
+  <!-- Palanca Original/Master -->
+  <div class="flex items-center justify-between gap-3">
+    <span class="text-[0.7rem] text-zinc-500">Original</span>
+    <button
+      type="button"
+      class="relative w-14 h-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center transition-all"
+      data-role="toggle"
+      data-state="off"
+      aria-label="Cambiar a Master"
+    >
+      <span
+        class="block w-5 h-5 bg-zinc-300 rounded-full translate-x-1 transition-all"
+        data-role="knob"
+      ></span>
+    </button>
+    <span class="text-[0.7rem] text-zinc-500">Master</span>
+  </div>
+
+  <div class="text-[0.7rem] text-zinc-500">
+    <span data-role="label">Reproduciendo: Original</span>
+  </div>
+
+  <!-- Controles -->
+  <div class="flex items-center gap-3 mt-1">
+    <!-- Play/Pause -->
     <button
       type="button"
       class="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700 text-zinc-300 hover:bg-emerald-500/90 hover:text-zinc-950 hover:border-emerald-400 transition-all"
       data-role="play"
-      aria-label={`Reproducir ${title}`}
       data-state="paused"
+      aria-label="Reproducir / Pausar"
     >
       <span
         class="block w-0 h-0 border-l-[10px] border-l-current border-y-[6px] border-y-transparent"
@@ -40,43 +65,52 @@ const { title, mood, file } = Astro.props;
         data-icon="pause"
       ></span>
     </button>
+
+    <!-- Tiempo actual -->
+    <span class="text-[0.65rem] text-zinc-500 min-w-[32px]" data-role="current">0:00</span>
+
+    <!-- Línea de tiempo (range con fill) -->
+    <input
+      type="range"
+      min="0" max="100" step="0.1" value="0"
+      class="flex-1 h-2 appearance-none rounded-full outline-none cursor-pointer
+             [--bg:#27272a] [--fill:#34d399]
+             bg-[linear-gradient(to_right,var(--fill)_0%,var(--fill)_0%,var(--bg)_0%,var(--bg)_100%)] 
+             [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3
+             [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-zinc-300
+             [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-zinc-400"
+      data-role="seek"
+      aria-label="Línea de tiempo"
+    />
+
+    <!-- Duración -->
+    <span class="text-[0.65rem] text-zinc-500 min-w-[32px]" data-role="duration">0:00</span>
   </div>
 
-  <div class="flex items-center gap-3">
-    <span class="text-[0.65rem] text-zinc-500 min-w-[32px]" data-role="current">
-      0:00
-    </span>
-    <div class="relative flex-1 h-1.5 rounded-full bg-zinc-800 overflow-hidden">
-      <div
-        class="absolute inset-y-0 left-0 w-0 bg-emerald-400/80 transition-[width]"
-        data-role="progress"
-      ></div>
-    </div>
-    <span class="text-[0.65rem] text-zinc-500 min-w-[32px]" data-role="duration">
-      0:00
-    </span>
+  <!-- Volumen -->
+  <div class="flex items-center gap-3 mt-1">
+    <span class="text-[0.65rem] text-zinc-500 min-w-[38px]">Volumen</span>
+    <input
+      type="range" min="0" max="100" value="100"
+      class="flex-1 h-2 appearance-none rounded-full outline-none cursor-pointer
+             [--bg:#27272a] [--fill:#34d399]
+             bg-[linear-gradient(to_right,var(--fill)_100%,var(--fill)_100%,var(--bg)_100%,var(--bg)_100%)]
+             [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3
+             [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-400
+             [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-emerald-300"
+      data-role="volume"
+      aria-label="Volumen"
+    />
+    <span class="text-[0.65rem] text-zinc-500 min-w-[32px]" data-role="vol-label">100%</span>
   </div>
 
-  <audio src={file} preload="metadata" class="hidden" data-audio></audio>
+  <!-- Fuentes (ambas reproducen a la vez; alternamos volumen) -->
+  <audio src={dry} preload="metadata" class="hidden" data-audio="dry"></audio>
+  <audio src={master} preload="metadata" class="hidden" data-audio="master"></audio>
 </div>
 
 <script>
   if (typeof window !== "undefined") {
-    const root = document.currentScript?.parentElement as HTMLElement | null;
-    if (!root) return;
-
-    const audio = root.querySelector("[data-audio]") as HTMLAudioElement | null;
-    const playBtn = root.querySelector("[data-role='play']") as HTMLButtonElement | null;
-    const currentEl = root.querySelector("[data-role='current']") as HTMLSpanElement | null;
-    const durationEl = root.querySelector("[data-role='duration']") as HTMLSpanElement | null;
-    const progressEl = root.querySelector("[data-role='progress']") as HTMLDivElement | null;
-    const playIcon = root.querySelector("[data-icon='play']") as HTMLElement | null;
-    const pauseIcon = root.querySelector("[data-icon='pause']") as HTMLElement | null;
-
-    if (!audio || !playBtn || !currentEl || !durationEl || !progressEl || !playIcon || !pauseIcon) {
-      return;
-    }
-
     const formatTime = (t: number): string => {
       if (!isFinite(t) || t < 0) t = 0;
       const m = Math.floor(t / 60);
@@ -84,68 +118,168 @@ const { title, mood, file } = Astro.props;
       return `${m}:${s.toString().padStart(2, "0")}`;
     };
 
-    audio.addEventListener("loadedmetadata", () => {
-      durationEl.textContent = formatTime(audio.duration || 0);
-    });
+    const paintRange = (el: HTMLInputElement, color = "#34d399", bg = "#27272a") => {
+      const v = Math.max(0, Math.min(100, Number(el.value)));
+      el.style.background = `linear-gradient(to right, ${color} ${v}%, ${bg} ${v}%)`;
+    };
 
-    playBtn.addEventListener("click", () => {
-      const isPaused = audio.paused;
+    window.addEventListener("DOMContentLoaded", () => {
+      const roots = document.querySelectorAll<HTMLElement>("[data-player-root]");
 
-      // Pausar otros players
-      (
-        document.querySelectorAll("[data-player-root] audio") as NodeListOf<HTMLAudioElement>
-      ).forEach((el) => {
-        if (el !== audio) {
-          el.pause();
-          el.currentTime = 0;
+      roots.forEach((root) => {
+        const dry = root.querySelector<HTMLAudioElement>("[data-audio='dry']");
+        const master = root.querySelector<HTMLAudioElement>("[data-audio='master']");
+        const playBtn = root.querySelector<HTMLButtonElement>("[data-role='play']");
+        const playIcon = root.querySelector<HTMLElement>("[data-icon='play']");
+        const pauseIcon = root.querySelector<HTMLElement>("[data-icon='pause']");
+        const toggle = root.querySelector<HTMLButtonElement>("[data-role='toggle']");
+        const knob = root.querySelector<HTMLElement>("[data-role='knob']");
+        const label = root.querySelector<HTMLElement>("[data-role='label']");
+        const currentEl = root.querySelector<HTMLElement>("[data-role='current']");
+        const durationEl = root.querySelector<HTMLElement>("[data-role='duration']");
+        const seek = root.querySelector<HTMLInputElement>("[data-role='seek']");
+        const vol = root.querySelector<HTMLInputElement>("[data-role='volume']");
+        const volLabel = root.querySelector<HTMLElement>("[data-role='vol-label']");
 
-          const parent = el.closest("[data-player-root]") as HTMLElement | null;
-          if (!parent) return;
+        if (!dry || !master || !playBtn || !playIcon || !pauseIcon || !toggle || !knob ||
+            !label || !currentEl || !durationEl || !seek || !vol || !volLabel) return;
 
-          const otherBtn = parent.querySelector("[data-role='play']") as HTMLButtonElement | null;
-          const otherPlayIcon = parent.querySelector("[data-icon='play']") as HTMLElement | null;
-          const otherPauseIcon = parent.querySelector("[data-icon='pause']") as HTMLElement | null;
-          const otherProgress = parent.querySelector("[data-role='progress']") as HTMLDivElement | null;
-          const otherCurrent = parent.querySelector("[data-role='current']") as HTMLSpanElement | null;
+        let active: HTMLAudioElement = dry;
+        let passive: HTMLAudioElement = master;
+        let activeVolume = 1;
+        let seeking = false;
 
-          if (otherBtn && otherPlayIcon && otherPauseIcon) {
-            otherBtn.dataset.state = "paused";
-            otherPlayIcon.classList.remove("hidden");
-            otherPauseIcon.classList.add("hidden");
+        dry.volume = 1;
+        master.volume = 0;
+        paintRange(vol); paintRange(seek, "#34d399", "#3f3f46");
+
+        const setIcons = (playing: boolean) => {
+          playBtn.dataset.state = playing ? "playing" : "paused";
+          playIcon.classList.toggle("hidden", playing);
+          pauseIcon.classList.toggle("hidden", !playing);
+        };
+
+        const resetUI = () => {
+          currentEl.textContent = "0:00";
+          seek.value = "0";
+          paintRange(seek, "#34d399", "#3f3f46");
+          setIcons(false);
+        };
+
+        const updateDuration = () => {
+          durationEl.textContent = formatTime(active.duration || 0);
+        };
+
+        const alignPassiveToActive = () => {
+          if (!isFinite(active.currentTime)) return;
+          const diff = Math.abs(passive.currentTime - active.currentTime);
+          if (diff > 0.05) passive.currentTime = active.currentTime;
+        };
+
+        const attach = (audio: HTMLAudioElement) => {
+          audio.addEventListener("loadedmetadata", () => {
+            if (audio === active) updateDuration();
+          });
+
+          audio.addEventListener("timeupdate", () => {
+            if (audio !== active || seeking) return;
+            currentEl.textContent = formatTime(audio.currentTime);
+            const ratio = (audio.duration && isFinite(audio.duration))
+              ? (audio.currentTime / audio.duration) : 0;
+            seek.value = String(ratio * 100);
+            paintRange(seek, "#34d399", "#3f3f46");
+            alignPassiveToActive();
+          });
+
+          audio.addEventListener("ended", () => {
+            dry.pause(); master.pause();
+            setIcons(false);
+          });
+        };
+
+        attach(dry); attach(master);
+
+        // Palanca Original/Master (volúmenes)
+        toggle.addEventListener("click", () => {
+          const isOn = toggle.dataset.state === "on";
+          [active, passive] = [passive, active];
+          alignPassiveToActive();
+
+          if (!isOn) {
+            toggle.dataset.state = "on";
+            toggle.classList.remove("bg-zinc-800");
+            toggle.classList.add("bg-emerald-500/80");
+            knob.classList.replace("translate-x-1", "translate-x-8");
+            label.textContent = "Reproduciendo: Master";
+          } else {
+            toggle.dataset.state = "off";
+            toggle.classList.remove("bg-emerald-500/80");
+            toggle.classList.add("bg-zinc-800");
+            knob.classList.replace("translate-x-8", "translate-x-1");
+            label.textContent = "Reproduciendo: Original";
           }
-          if (otherProgress) otherProgress.style.width = "0%";
-          if (otherCurrent) otherCurrent.textContent = "0:00";
-        }
+
+          active.volume = activeVolume;
+          passive.volume = 0;
+          updateDuration();
+        });
+
+        // Volumen (solo pista activa)
+        const applyVolFromSlider = () => {
+          const v = Math.max(0, Math.min(100, Number(vol.value)));
+          activeVolume = v / 100;
+          active.volume = activeVolume;
+          volLabel.textContent = `${v}%`;
+          paintRange(vol);
+        };
+        vol.addEventListener("input", applyVolFromSlider);
+        applyVolFromSlider();
+
+        // Seek
+        const seekToPercent = (p: number) => {
+          if (!active.duration || !isFinite(active.duration)) return;
+          const t = (Math.max(0, Math.min(100, p)) / 100) * active.duration;
+          active.currentTime = t;
+          passive.currentTime = t;
+          currentEl.textContent = formatTime(t);
+        };
+        seek.addEventListener("input", () => {
+          seeking = true;
+          paintRange(seek, "#34d399", "#3f3f46");
+          seekToPercent(Number(seek.value));
+        });
+        seek.addEventListener("change", () => { seeking = false; });
+
+        // Play/Pause → suenan ambas (una a 0)
+        playBtn.addEventListener("click", () => {
+          const isPlaying = playBtn.dataset.state === "playing";
+
+          document.querySelectorAll<HTMLAudioElement>("[data-player-root] audio").forEach((el) => {
+            if (el !== dry && el !== master) el.pause();
+          });
+          document.querySelectorAll<HTMLButtonElement>("[data-role='play']").forEach((btn) => {
+            if (btn !== playBtn) {
+              btn.dataset.state = "paused";
+              btn.querySelector<HTMLElement>("[data-icon='play']")?.classList.remove("hidden");
+              btn.querySelector<HTMLElement>("[data-icon='pause']")?.classList.add("hidden");
+            }
+          });
+
+          if (!isPlaying) {
+            alignPassiveToActive();
+            active.play(); passive.play();
+            setIcons(true);
+          } else {
+            dry.pause(); master.pause();
+            setIcons(false);
+          }
+        });
+
+        // Inicial
+        label.textContent = "Reproduciendo: Original";
+        resetUI();
+        updateDuration();
       });
-
-      if (isPaused) {
-        audio.play();
-        playBtn.dataset.state = "playing";
-        playIcon.classList.add("hidden");
-        pauseIcon.classList.remove("hidden");
-      } else {
-        audio.pause();
-        playBtn.dataset.state = "paused";
-        playIcon.classList.remove("hidden");
-        pauseIcon.classList.add("hidden");
-      }
-    });
-
-    audio.addEventListener("timeupdate", () => {
-      currentEl.textContent = formatTime(audio.currentTime);
-      const ratio =
-        audio.duration && isFinite(audio.duration)
-          ? audio.currentTime / audio.duration
-          : 0;
-      progressEl.style.width = `${Math.max(0, Math.min(1, ratio)) * 100}%`;
-    });
-
-    audio.addEventListener("ended", () => {
-      playBtn.dataset.state = "paused";
-      playIcon.classList.remove("hidden");
-      pauseIcon.classList.add("hidden");
-      progressEl.style.width = "0%";
-      currentEl.textContent = "0:00";
     });
   }
 </script>
