@@ -29,11 +29,18 @@ const tools = [
 ];
 ---
 
+<style>
+  /* Los bloques que “caen” y se desenfocan al alejarse del punto dulce */
+  .reveal-block {
+    will-change: transform, opacity, filter;
+  }
+</style>
+
 <section id="skills" class="space-y-8 border-t border-zinc-900 pt-14 mt-8">
   <h2 class="text-xl font-semibold tracking-tight text-zinc-100">Competencias</h2>
 
   <!-- 1) Desarrollo (Full-stack) -->
-  <div class="space-y-4">
+  <div class="space-y-4 reveal-block" data-reveal-block>
     <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide">Desarrollo (Full-stack)</h3>
     <p class="text-[0.95rem] text-zinc-300 leading-relaxed">
       Enfoque principal en frontend moderno (accesibilidad, rendimiento y DX), con experiencia en backend y
@@ -45,7 +52,10 @@ const tools = [
       <p class="text-[0.8rem] text-zinc-400">Lenguajes</p>
       <div class="flex flex-wrap gap-2">
         {langs.map((t) => (
-          <span class="px-2.5 py-1 rounded-full bg-zinc-900/70 border border-zinc-800 text-zinc-200 text-xs">
+          <span
+            data-magnet
+            class="px-2.5 py-1 rounded-full bg-zinc-900/70 border border-zinc-800 text-zinc-200 text-xs"
+          >
             {t}
           </span>
         ))}
@@ -57,7 +67,10 @@ const tools = [
       <p class="text-[0.8rem] text-zinc-400">Frameworks & Librerías</p>
       <div class="flex flex-wrap gap-2">
         {frameworks.map((t) => (
-          <span class="px-2.5 py-1 rounded-full bg-zinc-900/70 border border-zinc-800 text-zinc-200 text-xs">
+          <span
+            data-magnet
+            class="px-2.5 py-1 rounded-full bg-zinc-900/70 border border-zinc-800 text-zinc-200 text-xs"
+          >
             {t}
           </span>
         ))}
@@ -69,7 +82,10 @@ const tools = [
       <p class="text-[0.8rem] text-zinc-400">Bases de datos</p>
       <div class="flex flex-wrap gap-2">
         {databases.map((t) => (
-          <span class="px-2.5 py-1 rounded-full bg-zinc-900/70 border border-zinc-800 text-zinc-200 text-xs">
+          <span
+            data-magnet
+            class="px-2.5 py-1 rounded-full bg-zinc-900/70 border border-zinc-800 text-zinc-200 text-xs"
+          >
             {t}
           </span>
         ))}
@@ -81,7 +97,10 @@ const tools = [
       <p class="text-[0.8rem] text-zinc-400">Herramientas</p>
       <div class="flex flex-wrap gap-2">
         {tools.map((t) => (
-          <span class="px-2.5 py-1 rounded-full bg-zinc-900/70 border border-zinc-800 text-zinc-200 text-xs">
+          <span
+            data-magnet
+            class="px-2.5 py-1 rounded-full bg-zinc-900/70 border border-zinc-800 text-zinc-200 text-xs"
+          >
             {t}
           </span>
         ))}
@@ -93,7 +112,7 @@ const tools = [
   <div class="h-px bg-zinc-900"></div>
 
   <!-- 2) Formación -->
-  <div class="space-y-4">
+  <div class="space-y-4 reveal-block" data-reveal-block>
     <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide">Formación</h3>
     <ul class="space-y-3 text-zinc-300 leading-relaxed">
       <li>
@@ -110,7 +129,7 @@ const tools = [
   </div>
 
   <!-- 3) Música & Sonido (resumen) -->
-  <div class="space-y-4">
+  <div class="space-y-4 reveal-block" data-reveal-block>
     <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide">Música & Sonido</h3>
     <ul class="space-y-2 text-zinc-300 leading-relaxed">
       <li>Mix y master finales · Mezcla de voces.</li>
@@ -122,11 +141,72 @@ const tools = [
   </div>
 
   <!-- 4) Idiomas & Certificados -->
-  <div class="space-y-4">
+  <div class="space-y-4 reveal-block" data-reveal-block>
     <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide">Idiomas & Certificados</h3>
     <ul class="space-y-2 text-zinc-300 leading-relaxed">
       <li>Inglés <span class="text-zinc-100 font-medium">B2</span> (MCER).</li>
       <li>Permiso de conducción <span class="text-zinc-100 font-medium">B</span>.</li>
     </ul>
   </div>
+
+  <!-- Chips magnéticos + scroll animado (A ↔ B) -->
+  <script>
+    import { initMagnet } from "../lib/anim";
+
+    if (typeof window !== "undefined") {
+      let destroyMagnet: null | (() => void) = null;
+
+      const selectBlocks = () =>
+        Array.from(document.querySelectorAll<HTMLElement>("[data-reveal-block]"));
+
+      const updateBlocks = () => {
+        const blocks = selectBlocks();
+        if (!blocks.length) return;
+
+        const vh = window.innerHeight || 1;
+
+        // Punto A y B en la pantalla:
+        // A = cuando la parte superior del bloque está al 80% de la altura de la ventana
+        // B = cuando esa parte superior está al 60%
+        const start = vh * 0.9;
+        const end = vh * 0.78;
+        const range = start - end || 1;
+
+        blocks.forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          const top = rect.top;
+
+          // t = 0 → punto A (más difuminado, más arriba)
+          // t = 1 → punto B (nítido, en su sitio)
+          const raw = (start - top) / range;
+          const t = Math.max(0, Math.min(1, raw));
+
+          const blur = (1 - t) * 4;        // 4px → 0px
+          const translateY = (1 - t) * -10; // -10px → 0px (cae un poco)
+          const opacity = 0.2 + 0.8 * t;   // 0.2 → 1
+
+          el.style.opacity = String(opacity);
+          el.style.transform = `translateY(${translateY}px)`;
+          el.style.filter = `blur(${blur}px)`;
+        });
+      };
+
+      const onReady = () => {
+        destroyMagnet = initMagnet("[data-magnet]", 120);
+        updateBlocks();
+        window.addEventListener("scroll", updateBlocks);
+        window.addEventListener("resize", updateBlocks);
+      };
+
+      const onPageHide = () => {
+        destroyMagnet?.();
+        destroyMagnet = null;
+        window.removeEventListener("scroll", updateBlocks);
+        window.removeEventListener("resize", updateBlocks);
+      };
+
+      window.addEventListener("DOMContentLoaded", onReady, { once: true });
+      window.addEventListener("pagehide", onPageHide);
+    }
+  </script>
 </section>

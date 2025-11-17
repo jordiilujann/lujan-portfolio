@@ -10,6 +10,17 @@ interface Props {
 const { title, mood, dry, master, description } = Astro.props;
 ---
 
+<style>
+  /* knob con transición más lenta y sensación de muelle usando cubic-bezier */
+  .knob-slow {
+    transition: transform 520ms cubic-bezier(0.22, 1.4, 0.36, 1);
+    will-change: transform;
+  }
+</style>
+
+
+
+
 <div
   class="group p-4 rounded-2xl bg-zinc-900/90 border border-zinc-800 hover:border-emerald-400/60 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(0,0,0,0.6)] transition-all flex flex-col gap-3"
   data-player-root
@@ -35,9 +46,9 @@ const { title, mood, dry, master, description } = Astro.props;
       aria-label="Cambiar a Master"
     >
       <span
-        class="block w-5 h-5 bg-zinc-300 rounded-full translate-x-1 transition-all"
-        data-role="knob"
-      ></span>
+    class="block w-5 h-5 bg-zinc-300 rounded-full translate-x-1 knob-slow"
+    data-role="knob"
+    ></span>
     </button>
     <span class="text-[0.7rem] text-zinc-500">Master</span>
   </div>
@@ -200,29 +211,35 @@ const { title, mood, dry, master, description } = Astro.props;
         attach(dry); attach(master);
 
         // Palanca Original/Master (volúmenes)
-        toggle.addEventListener("click", () => {
-          const isOn = toggle.dataset.state === "on";
-          [active, passive] = [passive, active];
-          alignPassiveToActive();
+toggle.addEventListener("click", () => {
+  const isOn = toggle.dataset.state === "on";
 
-          if (!isOn) {
-            toggle.dataset.state = "on";
-            toggle.classList.remove("bg-zinc-800");
-            toggle.classList.add("bg-emerald-500/80");
-            knob.classList.replace("translate-x-1", "translate-x-8");
-            label.textContent = "Reproduciendo: Master";
-          } else {
-            toggle.dataset.state = "off";
-            toggle.classList.remove("bg-emerald-500/80");
-            toggle.classList.add("bg-zinc-800");
-            knob.classList.replace("translate-x-8", "translate-x-1");
-            label.textContent = "Reproduciendo: Original";
-          }
+  // intercambiamos quién suena y alineamos tiempos
+  [active, passive] = [passive, active];
+  alignPassiveToActive();
 
-          active.volume = activeVolume;
-          passive.volume = 0;
-          updateDuration();
-        });
+  if (!isOn) {
+    toggle.dataset.state = "on";
+    toggle.classList.remove("bg-zinc-800");
+    toggle.classList.add("bg-emerald-500/80");
+    knob.classList.remove("translate-x-1");
+    knob.classList.add("translate-x-8");
+    label.textContent = "Reproduciendo: Master";
+  } else {
+    toggle.dataset.state = "off";
+    toggle.classList.remove("bg-emerald-500/80");
+    toggle.classList.add("bg-zinc-800");
+    knob.classList.remove("translate-x-8");
+    knob.classList.add("translate-x-1");
+    label.textContent = "Reproduciendo: Original";
+  }
+
+  // aplica volúmenes (active = la que suena, passive mute)
+  active.volume = activeVolume;
+  passive.volume = 0;
+  updateDuration();
+});
+
 
         // Volumen (solo pista activa)
         const applyVolFromSlider = () => {
